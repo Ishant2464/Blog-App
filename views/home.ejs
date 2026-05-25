@@ -7,20 +7,121 @@
   <body>
     <%- include('./partials/nav') %>
 
-    <div class="container mt-3">
-      <div class="row row-cols-4">
+    <div class="container mt-4">
+      <% if (!search) { %>
+      <div class="text-center py-4 mb-3">
+        <h2 class="fw-bold">Welcome to Blogify</h2>
+        <p class="text-secondary mb-0">
+          Read thoughtful stories, tutorials, and ideas from the community.
+        </p>
+      </div>
+      <% } %>
+
+      <form action="/" method="get" class="row g-2 align-items-end mb-4">
+        <div class="col-12 col-md-6">
+          <label for="search" class="form-label">Search</label>
+          <input
+            type="text"
+            class="form-control"
+            id="search"
+            name="search"
+            value="<%= search %>"
+            placeholder="Search by title"
+          />
+        </div>
+        <div class="col-12 col-md-3">
+          <label for="sort" class="form-label">Sort</label>
+          <select class="form-select" id="sort" name="sort">
+            <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+            <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Search</button>
+          <a href="/" class="btn btn-outline-secondary">Clear</a>
+        </div>
+      </form>
+
+      <% if (blogs.length > 0) { %>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         <% blogs.forEach(blog => { %>
+        <%
+          const plainBody = (blog.body || "").replace(/<[^>]*>/g, "");
+          const bodyPreview = plainBody.length > 100 ? `${plainBody.slice(0, 100)}...` : plainBody;
+          const createdAt = blog.createdAt
+            ? new Date(blog.createdAt).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "";
+        %>
         <div class="col">
-          <div class="card col" style="width: 18rem">
-            <img src="<%= blog.coverImageURL %>" class="card-img-top" />
-            <div class="card-body">
+          <div class="card h-100">
+            <img
+              src="<%= blog.coverImageURL %>"
+              class="card-img-top"
+              style="height: 180px; object-fit: cover"
+              onerror="this.onerror=null; this.src='/images/default.png';"
+            />
+            <div class="card-body d-flex flex-column">
               <h5 class="card-title"><%= blog.title %></h5>
+              <p class="card-text text-muted"><%= bodyPreview %></p>
+              <div class="small text-secondary mt-auto mb-3">
+                <div>
+                  By
+                  <% if (blog.createdBy) { %>
+                  <a href="/user/profile/<%= blog.createdBy._id %>" class="text-decoration-none"><%= blog.createdBy.fullName %></a>
+                  <% } else { %>
+                  Unknown
+                  <% } %>
+                </div>
+                <div><%= createdAt %></div>
+              </div>
               <a href="/blog/<%= blog._id %>" class="btn btn-primary">View</a>
             </div>
           </div>
         </div>
         <% }) %>
       </div>
+      <% } else { %>
+      <div class="alert alert-info" role="alert">
+        <% if (search) { %>
+        No blogs found for "<%= search %>".
+        <% } else { %>
+        No blogs have been published yet.
+        <% } %>
+      </div>
+      <% } %>
+
+      <% if (totalPages > 1) { %>
+      <%
+        const buildPageUrl = (pageNumber) => {
+          const params = new URLSearchParams();
+          if (search) params.set("search", search);
+          if (sort) params.set("sort", sort);
+          params.set("page", pageNumber);
+          return `/?${params.toString()}`;
+        };
+      %>
+      <nav aria-label="Blog pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= currentPage <= 1 ? '#' : buildPageUrl(currentPage - 1) %>">Previous</a>
+          </li>
+
+          <% for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) { %>
+          <li class="page-item <%= pageNumber === currentPage ? 'active' : '' %>">
+            <a class="page-link" href="<%= buildPageUrl(pageNumber) %>"><%= pageNumber %></a>
+          </li>
+          <% } %>
+
+          <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+            <a class="page-link" href="<%= currentPage >= totalPages ? '#' : buildPageUrl(currentPage + 1) %>">Next</a>
+          </li>
+        </ul>
+      </nav>
+      <% } %>
     </div>
 
     <%- include('./partials/scripts') %>

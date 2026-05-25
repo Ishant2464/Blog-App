@@ -12,7 +12,7 @@ function createTokenForUser(user) {
     role: user.role,
   };
 
-  return JWT.sign(payload, secret);
+  return JWT.sign(payload, secret, { expiresIn: "7d" });
 }
 
 function validateToken(token) {

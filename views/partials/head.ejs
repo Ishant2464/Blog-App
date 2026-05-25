@@ -4,6 +4,57 @@
   integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
   crossorigin="anonymous"
 />
+<style>
+  body {
+    background-color: #f8f9fa;
+    font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .navbar {
+    box-shadow: 0 0.25rem 1rem rgba(15, 23, 42, 0.12);
+  }
+
+  .container {
+    max-width: 1100px;
+  }
+
+  .card {
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.12);
+    transform: translateY(-4px);
+  }
+
+  .card-img-top {
+    height: 180px;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+
+  .btn {
+    border-radius: 999px;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.18);
+  }
+
+  .form-container {
+    max-width: 600px;
+  }
+
+  .editor-form-container {
+    max-width: 800px;
+  }
+</style>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
